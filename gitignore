@@ -1,0 +1,10 @@
+# Python
+__pycache__/
+*.pyc
+# virtual environments (each person creates their own from requirements.txt)
+.venv/
+venv/
+# macOS
+.DS_Store
+# raw Kaggle file is ~500 MB; only the filtered CSV is committed
+universal_top_spotify_songs.csv
