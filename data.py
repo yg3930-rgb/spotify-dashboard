@@ -127,3 +127,19 @@ def headline(df):
         "cross": int((countries_per_song >= 2).sum()),
         "songs": int(df["spotify_id"].nunique()),
     }
+
+
+def country_means(df):
+    """Mean popularity per country for the rows in view (W5: exact numbers)."""
+    return df.groupby("country")["popularity"].mean().dropna().sort_values(ascending=False)
+
+
+def correlation(songs, feature):
+    """Pearson r between an audio feature and popularity, with a plain label (W5)."""
+    if len(songs) < 3:
+        return None, ""
+    r = float(songs[feature].corr(songs["popularity"]))
+    size = abs(r)
+    label = ("negligible" if size < 0.1 else "weak" if size < 0.3
+             else "moderate" if size < 0.5 else "strong")
+    return r, f"{label} {'positive' if r > 0 else 'negative'}"
