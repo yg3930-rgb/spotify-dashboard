@@ -10,22 +10,27 @@ from 2025-03-14 to 2025-06-11.
 3. How are audio features such as danceability and energy related to song popularity?
 
 ## Setup
+Requires Python 3.9 or later.
 ```bash
-python -m venv venv
+python3 -m venv venv
 source venv/bin/activate        # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 python app.py
 ```
-Open http://127.0.0.1:8050 in a browser.
+Open http://127.0.0.1:8050 in a browser. Debug mode is off by default; run `DASH_DEBUG=1 python app.py` to turn it on while developing.
 
 ## Interactions
 | View | Interaction | Effect on other views |
 |---|---|---|
 | Line chart | Drag horizontally to select dates | Bar, scatter and KPIs use only those dates; range is shaded on the line chart |
-| Bar chart | Click a bar | Adds/removes the song: line chart shows that song's popularity, scatter and bar highlight it |
+| Bar chart | Click a bar; click again to deselect | Line chart shows that song's popularity (title updates); bar and scatter highlight it; the selected song is named above the bar chart |
 | Scatter plot | Lasso or box-select | Selected songs become the song selection |
 | Sidebar | Countries, dates, songs | Same shared state as the chart interactions |
-| Sidebar | Reset all | Clears every selection |
+| Sidebar | Reset all | Restores every control: countries, dates, songs, scatter feature and minimum chart-days |
+
+An **Active filters** bar above the charts lists every filter in effect. The line chart shows the average popularity per country for the selected dates, and the scatter plot reports n and Pearson r.
+
+
 
 ## Project structure
 ```
@@ -52,4 +57,4 @@ Data notes:
 ## References
 - Colorblind-safe palette: Okabe, M. & Ito, K. (2008), *Color Universal Design*.
 - Dash documentation: https://dash.plotly.com
-- Development assistance: [describe any tools or AI assistance used, per course policy]
+- Development assistance: Claude (Anthropic) was used as a coding assistant to help write, debug and comment the code. I reviewed all code and can explain it.
