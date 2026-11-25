@@ -44,12 +44,15 @@ def _empty(message, height=CHART_HEIGHT):
     return fig
 
 
-def line_figure(daily, start=None, end=None):
+def line_figure(daily, start=None, end=None, show_events=True,
+                show_end_labels=True, y_title="Mean popularity (0–100)"):
     """View 1: mean popularity over time, one line per country.
 
     x = date (time flows left to right), y = popularity (position, the most
     accurate channel), hue = country. Countries are labelled directly at the
-    line ends instead of using a legend.
+    line ends instead of using a legend — except when songs are selected:
+    then all lines sit at nearly the same value, the labels only pile up,
+    and the means row below the chart already carries the country colours.
     """
     if daily.empty:
         return _empty("No data for this selection. Try clearing a filter.")
@@ -72,7 +75,10 @@ def line_figure(daily, start=None, end=None):
             end_labels.append([code, last["snapshot_date"].iloc[0], last["popularity"].iloc[0]])
 
     # Direct labels at line ends, nudged apart so close lines don't overlap.
-    if end_labels:
+    # Skipped when songs are selected: the lines overlap almost exactly, so
+    # the labels pile up at one value (leftover from W6); the means row
+    # below the chart already lists the countries with their colours.
+    if end_labels and show_end_labels:
         y_span = daily["popularity"].max() - daily["popularity"].min()
         min_gap = max(y_span, 1) * 0.045
         end_labels.sort(key=lambda item: -item[2])
@@ -84,7 +90,8 @@ def line_figure(daily, start=None, end=None):
                                xshift=6, font=dict(color=COUNTRY_COLORS[code], size=11))
 
     # Editorial annotations (see config.EVENTS) for countries currently shown.
-    shown = set(daily["country"].unique())
+    # Hidden when songs are selected: they describe the top-50 average, not one song (W6).
+    shown = set(daily["country"].unique()) if show_events else set()
     for event in EVENTS:
         if event["country"] in shown:
             point = daily[(daily["country"] == event["country"])
@@ -107,7 +114,7 @@ def line_figure(daily, start=None, end=None):
         height=CHART_HEIGHT,
         dragmode="select", selectdirection="h",  # horizontal brush = date range
         margin=dict(l=48, r=36, t=8, b=40),
-        yaxis=dict(title="Mean popularity (0–100)", gridcolor=GRID_COLOR, zeroline=False),
+        yaxis=dict(title=y_title, gridcolor=GRID_COLOR, zeroline=False),
         xaxis=dict(gridcolor=GRID_COLOR, zeroline=False),
     ))
     return fig
